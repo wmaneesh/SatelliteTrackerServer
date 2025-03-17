@@ -3,9 +3,7 @@ package com.wmaneesh.satellitetracker.controller;
 import com.wmaneesh.satellitetracker.model.Satellite;
 import com.wmaneesh.satellitetracker.service.SatelliteService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 import java.io.IOException;
@@ -23,6 +21,16 @@ public class SatelliteDataController {
 
     @GetMapping("/all")
     public Flux<Satellite> getAllSatellites() {
-        return satelliteService.getAllSatellites();
+        return satelliteService.getAllSatellitesFromApi();
+    }
+
+    @GetMapping("/all/fromFile")
+    public Flux<Satellite> getAllSatellitesFromFile() {
+        return satelliteService.getAllSatellitesFromFile();
+    }
+
+    @PostMapping("/stripeTest")
+    public void getJson(@RequestBody String json) {
+        satelliteService.testingStripe(json);
     }
 }

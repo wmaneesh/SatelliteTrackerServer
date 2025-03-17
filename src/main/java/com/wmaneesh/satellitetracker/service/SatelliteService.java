@@ -9,29 +9,23 @@ import reactor.core.publisher.Flux;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.wmaneesh.satellitetracker.utils.ReadJsonFile.getSatellitesFromFile;
+import static com.wmaneesh.satellitetracker.utils.ReadJsonFile.*;
 
 @Service
 public class SatelliteService {
 
-//    private final String URL = "https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=json";
-    private final String BASE_URL = "https://celestrak.org/satcat/records.php?GROUP=active&FORMAT=JSON";
-
     private final WebClient webClient;
-
     private List<Satellite> storage;
 
-
     @Autowired
-    public SatelliteService(WebClient.Builder webClient) {
-        this.webClient = webClient.baseUrl(BASE_URL).build();
+    public SatelliteService(WebClient webClient) {
+        this.webClient = webClient;
         this.storage = new ArrayList<>();
     }
 
     public void fetchAllSatellites() {
         List<Satellite> allSatellites = webClient
                 .get()
-                .uri(BASE_URL)
                 .retrieve()
                 .bodyToFlux(Satellite.class)
                 .collectList()
@@ -40,18 +34,14 @@ public class SatelliteService {
         storage.addAll(allSatellites);
     }
 
+    public Flux<Satellite> getAllSatellitesFromApi() {
+        return webClient
+                .get()
+                .retrieve()
+                .bodyToFlux(Satellite.class);
+    }
 
-    public Flux<Satellite> getAllSatellites() {
-//        if (storage.isEmpty()) {
-//            fetchAllSatellites();
-//        }
-
-//        return webClient
-//                .get()
-//                .uri(BASE_URL)
-//                .retrieve()
-//                .bodyToFlux(Satellite.class);
-
+    public Flux<Satellite> getAllSatellitesFromFile() {
         return Flux.fromIterable(getSatellitesFromFile());
     }
 
